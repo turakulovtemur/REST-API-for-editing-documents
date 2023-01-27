@@ -36,11 +36,13 @@ namespace TestRestApiApp.Services
 
         public async Task<IEnumerable<DocumentDto>> GetAll(GetPageDocumentModel model, CancellationToken cancellation)
         {
+
             return await db.Documents
                 .AsNoTracking()
-                .Skip((model.PageSize - 1) * model.PageNumber)
-                .Take(model.PageSize)
-                .Select(x => new DocumentDto(x))                   
+                .OrderBy(x => x.CreatedDate)
+                .Skip((model.PageNumber - 1) * model.PageSize)
+                .Take(model.PageSize)                
+                .Select(x => new DocumentDto(x))                
                 .ToListAsync(cancellation)
                 .ConfigureAwait(false);
         }
