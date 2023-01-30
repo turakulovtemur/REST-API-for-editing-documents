@@ -16,5 +16,9 @@ namespace TestRestApiApp.Services
 
         public Task<IEnumerable<DocumentDto>> GetAll(GetPageDocumentModel model,CancellationToken cancellation);
 
+        public int GetDocumentsCount();
+       
+        
+
     }
 }

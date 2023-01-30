@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 using TestRestApiApp.DataContexts;
 using TestRestApiApp.Dto;
 using TestRestApiApp.DTO;
@@ -35,16 +36,21 @@ namespace TestRestApiApp.Services
         }
 
         public async Task<IEnumerable<DocumentDto>> GetAll(GetPageDocumentModel model, CancellationToken cancellation)
-        {
-
+        { 
             return await db.Documents
                 .AsNoTracking()
                 .OrderBy(x => x.CreatedDate)
                 .Skip((model.PageNumber - 1) * model.PageSize)
-                .Take(model.PageSize)                
-                .Select(x => new DocumentDto(x))                
+                .Take(model.PageSize)
+                .Select(x => new DocumentDto(x))
                 .ToListAsync(cancellation)
-                .ConfigureAwait(false);
+                .ConfigureAwait(false); 
+        }
+
+        public int GetDocumentsCount()
+        {
+            var count=  db.Documents.OrderBy(x=>x.CreatedDate).ToList().Count;
+           return count; 
         }
 
         public async Task<DocumentDto> UpdateDocument(DocumentModel model, CancellationToken cancellation)
@@ -98,5 +104,7 @@ namespace TestRestApiApp.Services
             await db.SaveChangesAsync(cancellation);            
 
         }
+
+        
     }
 }

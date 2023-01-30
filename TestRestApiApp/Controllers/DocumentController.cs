@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Text.Json.Serialization;
 using TestRestApiApp.Dto;
 using TestRestApiApp.DTO;
 using TestRestApiApp.Exceptions;
@@ -88,11 +90,25 @@ namespace TestRestApiApp.Controllers
                          
         [SwaggerOperation("Получить список документов с пагинацией, сортировка в последние созданные сверху")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DocumentDto>>> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
+        public async Task<ActionResult<IEnumerable<DocumentDtoPaganiation>>> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
         {
-            var result = await _service.GetAll(new GetPageDocumentModel { PageNumber = page, PageSize = pageSize }, token);
+            var pageRes = (float)pageSize;
+            var pageCount = Math.Ceiling(_service.GetDocumentsCount() / pageRes);
+            
+            var doc = await _service.GetAll(new GetPageDocumentModel { PageNumber = page, PageSize = pageSize}, token);
+
+
+            var result = new DocumentDtoPaganiation
+            {
+                documentDtos=doc.ToList(),
+                CurrentPage=page,
+                PageCount=(int)pageCount
+                
+            };
+
             return Ok(result);
         }
+
 
     }
 }
