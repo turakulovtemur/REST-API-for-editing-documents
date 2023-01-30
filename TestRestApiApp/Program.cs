@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using TestRestApiApp.DataContexts;
 using TestRestApiApp.Services;
 
@@ -32,8 +33,14 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI();    
 }
+
+Log.Logger=new LoggerConfiguration()
+    .WriteTo.Console()//ƒобавить консоль в качестве цели ведени€ журнала
+    .MinimumLevel.Debug() //”становить минимальный уровень журнала по умолчанию
+    .CreateLogger();//—оздает фактический регистратор
+
 
 app.UseHttpsRedirection();
 
